@@ -1,0 +1,67 @@
+name: Release-$(date:yyyyMMdd)-$(rev:r)
+trigger: none
+resources:
+  repositories:
+    - repository: devopspipeline
+      type: git
+      name: Global\DevOps.Pipelines
+  pipelines:
+    - pipeline: ECS
+      project: Global
+      source: Infrastructure/AWS/CI/CF/AWS.ECS.Service
+      branch: master
+    - pipeline: CI
+      source: MarketPlace/CI/Docker/MarketPlace.Backend.Template.VehicleManagementMicroserviceAPI.CI
+      branch: main
+      trigger:
+        branches:
+          - main
+variables:
+  - template: variables_Release.yaml
+extends:
+  template: release/environments.yaml@devopspipeline
+  parameters:
+    environments:
+      - stageName: INT
+        stageJobs:
+          - type: DeploymentJob
+            name: ${{ variables.jobName }}
+            pool: Azure Releases DevTest
+            environment: AWS_Marketplace_INT
+            variables: ${{ variables.folderPath }}/variables_INT.yaml@self
+            deploymentSteps: ${{ variables.folderPath }}/deployment_steps.yaml@self
+            pAWSCredentials: AWS-Marketplace-Dev
+            templatePrefix: ${{ variables.templatePrefix }}
+#      - stageName: QA
+#        stageDependsOn: INT
+#        stageJobs:
+#          - type: DeploymentJob
+#            name: ${{ variables.jobName }}
+#            pool: Azure Releases DevTest
+#            environment: AWS_Marketplace_QA
+#            variables: ${{ variables.folderPath }}/variables_QA.yaml@self
+#            deploymentSteps: ${{ variables.folderPath }}/deployment_steps.yaml@self
+#            pAWSCredentials: AWS-Marketplace-Dev
+#            templatePrefix: ${{ variables.templatePrefix }}
+#      - stageName: STG
+#        stageDependsOn: QA
+#        stageJobs:
+#          - type: DeploymentJob
+#            name: ${{ variables.jobName }}
+#            pool: Azure Releases DevTest
+#            environment: AWS_Marketplace_STG
+#            variables: ${{ variables.folderPath }}/variables_STG.yaml@self
+#            deploymentSteps: ${{ variables.folderPath }}/deployment_steps.yaml@self
+#            pAWSCredentials: AWS-Marketplace-Dev
+#            templatePrefix: ${{ variables.templatePrefix }}
+#      - stageName: PRD
+#        stageDependsOn: STG
+#        stageJobs:
+#          - type: DeploymentJob
+#            name: ${{ variables.jobName }}
+#            pool: Azure Releases DevTest
+#            environment: AWS_Marketplace_PRD
+#            variables: ${{ variables.folderPath }}/variables_PRD.yaml@self
+#            deploymentSteps: ${{ variables.folderPath }}/deployment_steps.yaml@self
+#            pAWSCredentials: AWS-Marketplace-Prod
+#            templatePrefix: ${{ variables.templatePrefix }}

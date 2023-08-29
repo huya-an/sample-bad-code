@@ -1,0 +1,26 @@
+name: $(Year:yy).$(Month).$(DayOfMonth)$(rev:.r)
+
+resources:
+  repositories:
+  - repository: devopspipeline
+    type: git
+    name: Global\DevOps.Pipelines
+trigger:
+  branches:
+    include:
+    - main
+  paths:
+    exclude:
+    - /pipeline/*
+
+stages:
+- template: build/docker_maven_container_job.yaml@devopspipeline
+  parameters:
+    awsCredentials: AWS-Marketplace-Prod
+    container: 'maven:3.8.2-jdk-11'
+    mavenPublishJUnitResults: true
+    mavenCodeCoverageToolOption: jaCoCo
+    copyContents: |
+      target/*.jar
+      Dockerfile
+    imageName: vehicle-management

@@ -1,0 +1,8 @@
+parameters:
+  - name: job
+    type: object
+steps:
+  - template: release/ecs_deployment_steps.yaml@devopspipeline
+    parameters:
+      pAWSCredentials: ${{ parameters.job.pAWSCredentials }}
+      templatePrefix: ${{ parameters.job.templatePrefix }}

@@ -1,0 +1,6 @@
+variables: 
+  - group: AWS Marketplace INT Environment
+  - group: AppD Agent Account - INT
+  - group: AWS Marketplace ECS1 Cluster INT
+  - group: AWS LogStreamer - DevTest
+  - group: AWS Marketplace LoadBalancers INT

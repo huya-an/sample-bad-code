@@ -1,0 +1,54 @@
+variables:
+  - group: AWS ECS Service Defaults
+  - group: AppD Agent Shared Settings
+  - group: AWS ECS CloudWatch Alarms
+  - name: pActiveContainer
+    value: container
+  - name: APPDYNAMICS_AGENT_TIER_NAME
+    value: VehicleManagement
+  - name: pAppImageUrl
+    value: 785103913563.dkr.ecr.$(pAWSRegion).amazonaws.com/vehicle-management:$(resources.pipeline.CI.runName)
+  - name: pAppName
+    value: vehicle-management-$(pEnvironment)
+  - name: pAppPath
+    value: /vehicle/*
+  - name: pEnableCapacityProviderStrategy
+    value: true    
+  - name: pHealthCheckPath
+    value: /vehicle/v1/health
+  - name: pContainerMemory
+    value: 1024
+  - name: pRoleName
+    value: Marketplace-ECSTaskRole-$(pEnvironment)
+  - name: StackName
+    value: ecs-$(pAppName)
+# AppDynamics Variables
+  - name: pAWS_SECRET.APPDYNAMICS_AGENT_ACCOUNT_ACCESS_KEY
+    value: arn:aws:ssm:$(pAWSRegion):$(pAWSAccountId):parameter/an-appd-autonation-$(pEnvironment)-key
+  - name: pENV.APP_ACTIVE_PROFILE
+    value: $(pActiveContainer)
+  - name: pENV.APPDYNAMICS_AGENT_ACCOUNT_NAME
+    value: $(APPDYNAMICS_AGENT_ACCOUNT_NAME)
+  - name: pENV.APPDYNAMICS_AGENT_APPLICATION_NAME
+    value: MarketPlace
+  - name: pENV.APPDYNAMICS_AGENT_BASE_DIR
+    value: $(APPDYNAMICS_AGENT_BASE_DIR)
+  - name: pENV.APPDYNAMICS_AGENT_TIER_NAME
+    value: $(APPDYNAMICS_AGENT_TIER_NAME)
+  - name: pENV.APPDYNAMICS_CONTROLLER_HOST_NAME
+    value: $(APPDYNAMICS_CONTROLLER_HOST_NAME)
+  - name: pENV.APPDYNAMICS_CONTROLLER_PORT
+    value: $(APPDYNAMICS_CONTROLLER_PORT)
+  - name: pENV.APPDYNAMICS_CONTROLLER_SSL_ENABLED
+    value: $(APPDYNAMICS_CONTROLLER_SSL_ENABLED)
+  - name: pENV.APP_ACTIVE_PROFILE
+    value: $(pActiveContainer)
+  - name: pENV.JAVA_OPTS
+    value: -XX:+UseG1GC -XX:MaxRAMPercentage=50.00 -XX:MaxMetaspaceSize=300m -Xss512k -XX:+UseStringDeduplication $(pAppDOpts) -Dsun.misc.URLClassPath.disableJarChecking=true
+  # Pipeline-specific variables
+  - name: folderPath
+    value: pipeline
+  - name: jobName
+    value: Create_ECS_Service
+  - name: templatePrefix
+    value: ecs.service
